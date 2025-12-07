@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/openpeeps/groovebox/blob/main/.github/groovebox_logo.png" width="90px"><br>
-  A CLI source client for streaming to Icecast-compatible servers.
+  A CLI source client for streaming to Icecast-compatible servers.<br>
   Fast &bullet; Compiled &bullet; 👑 Written in Nim language
 </p>
 
