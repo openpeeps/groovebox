@@ -14,12 +14,12 @@
 </p>
 
 ## 😍 Key Features
-🔥 Compiled, extremely lightweight, and super fast
-👌 Compatible with Icecast2 servers
-📀 Zero-Copy audio streaming from source to Icecast-compatible servers
-🔀 Shuffle tracks in playlist
-🎩 Open Source | AGPLv3 License
-👑 Written in Nim language | Made by Humans from OpenPeeps
+- 🔥 Compiled, extremely lightweight, and super fast
+- 👌 Compatible with Icecast2 servers
+- 📀 Zero-Copy audio streaming from source to Icecast-compatible servers
+- 🔀 Shuffle tracks in playlist
+- 🎩 Open Source | AGPLv3 License
+- 👑 Written in Nim language | Made by Humans from OpenPeeps
 
 ## Examples
 ...
