@@ -89,16 +89,21 @@ Note: Groovebox is using the `ffmpeg` under the hood to convert audio/video file
 ## Groovebox Configuration
 Groovebox uses a YAML configuration file to specify the streaming settings, including the RTMP server URL, Stream Key, and playlist paths. You can create a new configuration file using the `groovebox init` command, or you can create it manually. The configuration file should be named `groovebox.config.yaml` and placed in the root of streaming project.
 
-
-### Streaming with RTMP
-The S
+## Icecast Streaming
+To stream to an Icecast-compatible server, you will need to provide the server address, port, mount point, and the playlist file in the `groovebox.config.yaml` file:
 ```yaml
-
+type: icecast
+icecast:
+  connection:
+    address: localhost
+    port: 8000
+    mountPoint: "/stream"
+    playlists:
+      - "playlist.txt"
 ```
 
 ## RTMP Streaming
 Groovebox can stream to any RTMP server, including YouTube and Twitch. To stream to an RTMP server, you will need the RTMP URL and Stream Key from your streaming platform.
-
 
 ### RTMP Stream Server
 Use the high-performance built-in RTMP server to receive and redistribute streams to other clients. To start the RTMP server, run:
