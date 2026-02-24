@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/openpeeps/groovebox/blob/main/.github/groovebox_logo.png" width="90px"><br>
-  Groovebox 📦 Badass CLI app for streaming to Twitch, Youtube, any RTMP servers and 🧊 Icecast-compatible servers<br>
+  Groovebox 📦 Badass CLI app for streaming to Twitch, Youtube,<br>any RTMP servers and 🧊 Icecast-compatible servers<br>
   Fast &bullet; Lightweight &bullet; Compiled &bullet; 👑 Written in Nim language
 </p>
 
