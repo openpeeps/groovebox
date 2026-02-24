@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://github.com/openpeeps/groovebox/blob/main/.github/groovebox_logo.png" width="90px"><br>
-  A CLI source client for streaming to Icecast-compatible servers.<br>
-  Fast &bullet; Compiled &bullet; 👑 Written in Nim language
+  Groovebox 📦 Badass CLI app for streaming to Twitch, Youtube, any RTMP servers and 🧊 Icecast-compatible servers<br>
+  Fast &bullet; Lightweight &bullet; Compiled &bullet; 👑 Written in Nim language
 </p>
 
 <p align="center">
@@ -13,16 +13,138 @@
   <img src="https://github.com/openpeeps/groovebox/workflows/test/badge.svg" alt="Github Actions">  <img src="https://github.com/openpeeps/groovebox/workflows/docs/badge.svg" alt="Github Actions">
 </p>
 
+> [!NOTE]
+> Groovebox is still in active development. Expect bugs and incomplete features!
+
+## About
+**Groovebox is a lightweight CLI application for live streaming pre-recorded playlists of media to YouTube, Twitch and other RTMP (Real-Time Messaging Protocol) servers**. Comes with a built-in RTMP server implementation that can be used to receive and redistribute streams to other clients.
+
+Also, with Groovebox you can stream music to Icecast-compatible servers! It is designed to be **fast**, **memory-efficient**, and **easy to use**, making it ideal for streaming sessions and internet radio stations.
+
+### How it works?
+It streams files (one-by-one) from playlists; it does not capture live camera or microphone input. Also, **Groovebox does not require any GPU acceleration as it does not perform any video encoding or decoding itself.** Still, you can use the predefined CLI commands to convert media files to formats suitable for streaming using ffmpeg.
+
+Groovebox media streams are sourced from local audio files (MP3, OGG Vorbis, OGG Opus, AAC, and more) from a specific `txt` playlist file and streamed directly to an **Icecast2-compatible** server or **RTMP servers** with **zero-copy audio/video streaming**, allowing for efficient streaming of large media files without consuming excessive system resources.
+
 ## 😍 Key Features
-- 🔥 Compiled, extremely lightweight, and super fast
-- 👌 Compatible with Icecast2 servers
-- 📀 Zero-Copy audio streaming from source to Icecast-compatible servers
+- 🔥 Compiled, **extremely lightweight**, and **super fast**
+- 🎵 Supports **MP3, OGG Vorbis, OGG Opus, AAC**, and more via external encoders
+- 📸 RTMP (Real-Time Messaging Protocol) support for future expansion
+- 👌 Icecast Client compatible with **Icecast2 servers**
+- 📀 **Zero-copy audio streaming**
 - 🔀 Shuffle tracks in playlist
+- Works on **Linux** and **macOS**
 - 🎩 Open Source | AGPLv3 License
 - 👑 Written in Nim language | Made by Humans from OpenPeeps
 
-## Examples
-...
+> [!NOTE]
+> Groovebox does not provide an encoder/decoder (codec) implementation. It is intended to be used for streaming pre-encoded audio/video via tools such as ffmpeg.
+
+
+## Install
+Using [Nimble](https://nim-lang.org/install.html):
+```bash
+nimble install groovebox
+```
+
+Otherwise, get the latest release from the [Releases](https://github.com/openpeeps/groovebox/releases) page.
+
+> [!NOTE]
+> You will need an Icecast-compatible server to stream to. You can set one up using [Icecast2](https://icecast.org/).
+
+## Usage
+Once installed, ensure `groovebox` is in your system PATH. You can then initialize the first stream configuration with:
+```bash
+groovebox init source <source_name>
+```
+This will create a directroy `./<source_name>/` with a default `groovebox.config.yaml` file. Use `--json` flag if you prefer JSON format.
+
+
+See all available options with:
+```bash
+groovebox --help
+```
+
+### RTMP Streaming
+Groovebox can stream to any RTMP server, including YouTube and Twitch. To stream to an RTMP server, you will need the RTMP URL and Stream Key from your streaming platform.
+
+#### YouTube / Twitch RTMP Server
+To stream to YouTube or Twitch RTMP server, first you will need the RTMP URL and **Stream Key** from your YouTube or Twitch account.
+
+Create a new `groovebox.config.yaml` using `groovebox init`, and configure the `rtmp` section with your RTMP server URL, Stream Key, and playlist path. For example:
+```yaml
+source:
+  rtmp:
+    url: "rtmp://a.rtmp.youtube.com/live2" # Replace with your RTMP server URL
+    streamKey: "your-stream-key"           # Replace with your Stream Key
+    playlistPath: "path/to/your/playlist.txt" # Path to your playlist
+    shuffle: true                          # Optional: Shuffle playlist
+    sendLeadMs: 2000                       # Optional: Lead time in ms
+```
+
+### Localhost RTMP Server
+You can stream to a local RTMP server using Groovebox's built-in RTMP server implementation, or use any other RTMP server such as [SRS (Simple Realtime Server)](https://github.com/ossrs/srs). Once installed and running your SRS server, you can use Groovebox to stream media to it.
+
+To play an RTMP stream with URL rtmp://localhost/live/livestream on VLC player, open the player, go to Media > Open Network Stream, enter the URL and click Play.
+
+#### Start Groovebox RTMP Server
+Use the high-performance built-in RTMP server to receive and redistribute streams to other clients. To start the RTMP server, run:
+```bash
+groovebox rtmp.server --config path/server/groovebox.config.yaml
+```
+
+### Why use Groovebox instead of ffmpeg/OBS Studio for streaming to RTMP servers?
+- **Simplicity**: Groovebox provides a simple and intuitive interface for streaming pre-recorded media to RTMP servers, without the need to write complex ffmpeg command lines.
+- **Playlist Management**: Groovebox has built-in support for managing playlists, allowing you to easily organize and shuffle your media files for streaming sessions.
+- **Zero-Copy Streaming**: Groovebox is designed to stream media directly from the source file to the network without fully loading it into memory, which makes it more efficient for streaming large media files without consuming excessive system resources.
+- **Lightweight**: Groovebox is a lightweight application that is optimized for streaming, while ffmpeg is a powerful multimedia framework that can be used for a wide range of media processing tasks, which may be overkill for simple streaming use cases.
+- **No GPU required**: OBS Studio is a popular streaming software that provides advanced features for live streaming, but it requires GPU acceleration for video encoding and processing, which may not be available on all systems. Groovebox, on the other hand, does not require any GPU acceleration as it does not perform any video encoding or decoding itself.
+- **Ideal for VPS streaming**: Groovebox is designed to be fast and efficient, making it ideal for streaming sessions from a basic VPS (Virtual Private Server) without the need for a GPU, or too much CPU/RAM resources.
+
+
+### FAQs
+Here are some questions and answers about Groovebox, so you can better understand its capabilities and limitations:
+
+##### Can I use Groovebox for live streaming from a webcam or microphone?
+No, Groovebox is designed for streaming pre-recorded media files from playlists. It does not capture live input from webcams or microphones. For live streaming from a webcam or microphone, you may want to use software like OBS Studio or Streamlabs.
+
+##### Can I use Groovebox for streaming video content?
+Yes, Groovebox can be used for streaming video content to RTMP servers. However, it does not perform any video encoding or decoding itself, so you will need to ensure that your video files are in a format that is compatible with your streaming platform and that they are properly encoded for streaming. You can use the built-in CLI commands to convert media files to formats suitable for streaming using ffmpeg.
+
+##### Can I use Groovebox for streaming to platforms other than YouTube and Twitch?
+Yes, Groovebox can stream to any RTMP server, including platforms other than YouTube and Twitch. You will need to obtain the RTMP URL and Stream Key from your streaming platform and configure Groovebox accordingly.
+
+
+##### Does Groovebox provide an encoder/decoder (codec) implementation?
+No, Groovebox does not provide an encoder/decoder (codec) implementation. It is intended to be used for streaming pre-encoded audio/video via tools such as ffmpeg. You can use the built-in CLI commands to convert media files to formats suitable for streaming using ffmpeg.
+
+##### Is Groovebox just a client for streaming to external RTMP servers, or does it also include a server implementation?
+Groovebox includes both a client for streaming to external RTMP servers and a built-in RTMP server implementation that can be used to receive and redistribute streams to other clients. You can use the built-in RTMP server to set up your own streaming server or to receive streams from other sources.
+
+
+##### Can I use Groovebox for streaming to Icecast-compatible servers?
+Yes, Groovebox is designed to be compatible with Icecast2 servers, allowing you to stream audio content to Icecast-compatible servers. You can configure Groovebox to stream your media files to an Icecast-compatible server by providing the necessary server details in the configuration file.
+
+### Roadmap
+Source Client
+- [ ] Handle multiple playlists
+- [x] Zero-copy live streaming pre-recorded media to RTMP servers
+- [x] Support for streaming to Icecast-compatible servers
+- [x] Support for streaming to YouTube/Twitch RTMP servers
+- [x] Shuffle playlists
+- [ ] Improve the shuffle algorithm (ensure no repeats until all tracks played)
+- [ ] Add support for more audio formats
+- [ ] Add support for video streaming
+- [ ] Add web interface for monitoring and control
+- [ ] Support ads insertion
+- [ ] Live streaming from non non-seekable sources (e.g. stdin) via ffmpeg
+
+Server
+- [ ] Implement a Icecast-compatible server with Supranim
+- [ ] Middleware Authentication using JWT
+- [ ] Subscriber management
+- [ ] Rate Limiting and Anti-abuse
+- [ ] Analytics and Reporting Dashboard
 
 ### ❤ Contributions & Support
 - 🐛 Found a bug? [Create a new Issue](https://github.com/openpeeps/groovebox/issues)
