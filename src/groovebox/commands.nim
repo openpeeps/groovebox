@@ -11,12 +11,13 @@
 ## streaming to an RTMP server, and converting media files to formats suitable for streaming.
 
 import std/[os, osproc, unidecode, strutils, posix]
+from std/net import Port, `$`
 
-import pkg/malebolgia
+import pkg/[malebolgia, nyml]
 import pkg/kapsis/[runtime, cli]
 import pkg/kapsis/interactive/spinny
 
-import ./ice
+import ./ice, ./config
 export icecastCommand
 
 
@@ -55,15 +56,28 @@ proc slugify*(str: string, sep: static char = '-', allowSlash: bool = false): st
       inc i
 
 import pkg/rtmp
+
 proc serverCommand*(v: Values) =
   ## Kapsis command for running RTMP server
+  display(cliHeading)
   let configPath = v.get("config").getPath
-  rtmp.startServer()
+  var rtmpServer = newRTMPServer()
+  display("Starting RTMP server on port " & $rtmpServer.settings.rtmpPort)
+  rtmpServer.startServer()
 
 proc streamCommand*(v: Values) =
   ## Kapsis command for runningg RTMP client with playlist support
-  # TODO full implementation
-  let client = newRtmpClient("rtmp://127.0.0.1/live/livestream")
+  display(cliHeading)
+  let configPath = normalizedPath(getCurrentDir() / $(v.get("config").getPath))
+  if configPath.endsWith(".yml") or configPath.endsWith(".yaml"):
+    GConfig = fromYaml(readFile(configPath), GrooveboxConfig)
+  elif configPath.endsWith(".json"):
+    GConfig = fromJson(readFile(configPath), GrooveboxConfig)
+  else:
+    display("No Groovebox Config found in the current directory (.yml/.yaml/.json)")
+    QuitFailure.quit
+  display("Streaming to RTMP server: " & GConfig.stream.url)
+  let client = newRtmpClient(GConfig.stream.url)
   # Load and shuffle playlists
   client.ps = PlaylistState(
     videoFiles: loadPlaylist("videoplaylist.txt"),
@@ -72,6 +86,8 @@ proc streamCommand*(v: Values) =
     audioIdx: 0
   )
   proc startNextVideo(client: RtmpClient, ps: PlaylistState) =
+    # Start next video in playlist, or loop back to start if at
+    # end and audio is still playing
     let videoPath = nextVideo(ps)
     if videoPath.len == 0 or (ps.currentAudioPath.len == 0 and ps.audioFiles.len > 0):
       ## debugEcho "[rtmp] No video or audio to play"

@@ -59,9 +59,9 @@ type
     ## Configuration for the RTMP client
     url*: string
       ## The RTMP server URL (e.g., "rtmp://a.rtmp.youtube.com/live2/streamkey")
-    video: seq[RtmpVideoPlaylist]
+    video: seq[string]
       ## List of video playlists file paths
-    audio: seq[RtmpAudioPlaylist]
+    audio: seq[string]
       ## List of audio playlists file paths
     settings*: GrooveboxPreferences
       ## User preferences for Groovebox
