@@ -89,16 +89,21 @@ Note: Groovebox is using the `ffmpeg` under the hood to convert audio/video file
 ## Groovebox Configuration
 Groovebox uses a YAML configuration file to specify the streaming settings, including the RTMP server URL, Stream Key, and playlist paths. You can create a new configuration file using the `groovebox init` command, or you can create it manually. The configuration file should be named `groovebox.config.yaml` and placed in the root of streaming project.
 
-
-### Streaming with RTMP
-The S
+## Icecast Streaming
+To stream to an Icecast-compatible server, you will need to provide the server address, port, mount point, and the playlist file in the `groovebox.config.yaml` file:
 ```yaml
-
+type: icecast
+icecast:
+  connection:
+    address: localhost
+    port: 8000
+    mountPoint: "/stream"
+    playlists:
+      - "playlist.txt"
 ```
 
 ## RTMP Streaming
 Groovebox can stream to any RTMP server, including YouTube and Twitch. To stream to an RTMP server, you will need the RTMP URL and Stream Key from your streaming platform.
-
 
 ### RTMP Stream Server
 Use the high-performance built-in RTMP server to receive and redistribute streams to other clients. To start the RTMP server, run:
@@ -126,12 +131,12 @@ stream:
 ```
 
 ### Why use Groovebox instead of ffmpeg/OBS Studio for streaming to RTMP servers?
-- **Simplicity**: Groovebox provides a simple and intuitive interface for streaming pre-recorded media to RTMP servers, without the need to write complex ffmpeg command lines.
-- **Playlist Management**: Groovebox has built-in support for managing playlists, allowing you to easily organize and shuffle your media files for streaming sessions.
-- **Zero-Copy Streaming**: Groovebox is designed to stream media directly from the source file to the network without fully loading it into memory, which makes it more efficient for streaming large media files without consuming excessive system resources.
-- **Lightweight**: Groovebox is a lightweight application that is optimized for streaming, while ffmpeg is a powerful multimedia framework that can be used for a wide range of media processing tasks, which may be overkill for simple streaming use cases.
-- **No GPU required**: OBS Studio is a popular streaming software that provides advanced features for live streaming, but it requires GPU acceleration for video encoding and processing, which may not be available on all systems. Groovebox, on the other hand, does not require any GPU acceleration as it does not perform any video encoding or decoding itself.
-- **Ideal for VPS streaming**: Groovebox is designed to be fast and efficient, making it ideal for streaming sessions from a basic VPS (Virtual Private Server) without the need for a GPU, or too much CPU/RAM resources.
+- 👌 **Simplicity**: Groovebox provides a simple and intuitive interface for streaming pre-recorded media to RTMP servers, without the need to write complex ffmpeg command lines.
+- 🎧 **Playlist Management**: Groovebox has built-in support for managing playlists, allowing you to easily organize and shuffle your media files for streaming sessions.
+- 📁 **Zero-Copy Streaming**: Groovebox is designed to stream media directly from the source file to the network without fully loading it into memory, which makes it more efficient for streaming large media files without consuming excessive system resources.
+- 🕊 **Lightweight**: Groovebox is a lightweight application that is optimized for streaming, while ffmpeg is a powerful multimedia framework that can be used for a wide range of media processing tasks, which may be overkill for simple streaming use cases.
+- 💪 **No GPU required**: OBS Studio is a popular streaming software that provides advanced features for live streaming, but it requires GPU acceleration for video encoding and processing, which may not be available on all systems. Groovebox, on the other hand, does not require any GPU acceleration as it does not perform any video encoding or decoding itself.
+- 💫 **Ideal for VPS streaming**: Groovebox is designed to be fast and efficient, making it ideal for streaming sessions from a basic VPS (Virtual Private Server) without the need for a GPU, or too much CPU/RAM resources.
 
 
 ### FAQs
