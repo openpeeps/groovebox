@@ -155,7 +155,7 @@ Yes, Groovebox can stream to any RTMP server, including platforms other than You
 #### Is Groovebox just a client for streaming to external RTMP servers, or does it also include a server implementation?
 Groovebox includes both a client for streaming to external RTMP servers and a built-in RTMP server implementation that can be used to receive and redistribute streams to other clients. You can use the built-in RTMP server to set up your own streaming server or to receive streams from other sources.
 
-##### Can I use Groovebox for streaming to Icecast-compatible servers?
+#### Can I use Groovebox for streaming to Icecast-compatible servers?
 Yes, Groovebox is designed to be compatible with Icecast2 servers, allowing you to stream audio content to Icecast-compatible servers. You can configure Groovebox to stream your media files to an Icecast-compatible server by providing the necessary server details in the configuration file.
 
 ## Roadmap
@@ -173,7 +173,7 @@ Source Client
 - [ ] Live streaming from non non-seekable sources (e.g. stdin) via ffmpeg
 
 Server
-- [ ] Implement a Icecast-compatible server with Supranim
+- [ ] Implement a Icecast-compatible based on Libevent
 - [ ] Middleware Authentication using JWT
 - [ ] Subscriber management
 - [ ] Rate Limiting and Anti-abuse
