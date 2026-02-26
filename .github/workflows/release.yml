@@ -15,8 +15,8 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          # - windows-latest
-          - macOS-latest
+          - macos-13
+          - macos-14
     steps:
       - uses: actions/checkout@v4
       # Optional: Cache nimble packages for faster builds
@@ -51,7 +51,9 @@ jobs:
       - name: Create artifact
         run: |
           os="${{ runner.os }}"
-          assets="${{ env.APP_NAME }}_$(echo "${{ runner.os }}" | tr '[:upper:]' '[:lower:]')"
+          arch="${{ matrix.arch:-'' }}"
+          suffix="$os${arch:+-$arch}"
+          assets="${{ env.APP_NAME }}_${suffix,,}"
           echo "$assets"
           mkdir -p "dist/$assets"
           cp -r bin LICENSE README.* "dist/$assets/"
@@ -67,7 +69,7 @@ jobs:
         shell: bash
       - uses: actions/upload-artifact@v4
         with:
-          name: artifact-${{ matrix.os }}
+          name: artifact-${{ matrix.os }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
           path: |
             dist/*.tar.gz
             dist/*.zip
@@ -112,13 +114,18 @@ jobs:
           # - os: windows-latest
           #   asset_name_suffix: windows.zip
           #   asset_content_type: application/zip
-          - os: macOS-latest
-            asset_name_suffix: macos.tar.gz
+          - os: macos-13
+            arch: x86_64
+            asset_name_suffix: macos-x86_64.tar.gz
+            asset_content_type: application/gzip
+          - os: macos-14
+            arch: arm64
+            asset_name_suffix: macos-arm64.tar.gz
             asset_content_type: application/gzip
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: artifact-${{ matrix.os }}
+          name: artifact-${{ matrix.os }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
 
       - uses: actions/download-artifact@v4
         with:
