@@ -3,6 +3,7 @@ on:
   push:
     tags:
       - '*.*.*'
+  workflow_dispatch:
 env:
   APP_NAME: 'groovebox'
   NIM_VERSION: '2.0.0'
@@ -22,18 +23,20 @@ jobs:
         with:
           nim-version: ${{ env.NIM_VERSION }}
       - run: choosenim show path -y
+      - name: Setup MacPorts (macOS only)
+        if: runner.os == 'macOS'
+        uses: melusina-org/setup-macports@v1
       - name: Install C library dependencies
         run: |
           if [[ "${{ runner.os }}" == "Linux" ]]; then
             sudo apt-get update
             sudo apt-get install -y --no-install-recommends \
-              pkg-config libssl-dev libevent-dev ca-certificates
+              pkg-config libssl-dev libevent-dev ca-certificates libpcre3-dev
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            brew update
-            brew install pkg-config openssl libevent
+            sudo port -v selfupdate
+            sudo port install pkgconfig openssl libevent pcre
           fi
         shell: bash
-      - run: choosenim show path -y
       - run: nimble build -Y -d:release
       - name: Create artifact
         run: |
@@ -60,6 +63,7 @@ jobs:
             dist/*.zip
   
   create-release:
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     needs:
       - build-artifact
@@ -86,6 +90,7 @@ jobs:
           path: upload_url.txt
   
   upload-release:
+    if: startsWith(github.ref, 'refs/tags/') # Only run this job for tag pushes
     runs-on: ubuntu-latest
     needs: create-release
     strategy:

@@ -27,7 +27,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            pkg-config libssl-dev libevent-dev ca-certificates
+            pkg-config libssl-dev libevent-dev ca-certificates libpcre3-dev
       - run: nimble install -Y
       - run: nim c -r src/${{ github.event.repository.name }}.nim
       - run: nimble test
