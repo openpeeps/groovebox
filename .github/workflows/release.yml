@@ -23,7 +23,6 @@ jobs:
         with:
           nim-version: ${{ env.NIM_VERSION }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - run: choosenim show path -y
       - name: Setup MacPorts (macOS only)
         if: runner.os == 'macOS'
         uses: melusina-org/setup-macports@v1
