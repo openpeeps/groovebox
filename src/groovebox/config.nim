@@ -69,7 +69,8 @@ type
   GrooveboxType* = enum
     ## Types of Groovebox streaming protocols
     grooveboxTypeIcecast = "icecast"
-    grooveboxTypeRtmp = "rtmp"
+    grooveboxTypeRtmpServer = "rtmpserver"
+    grooveboxTypeRtmpStream = "rtmpstream"
 
   GrooveboxConfig* = ref object
     ## Configuration for Groovebox
@@ -78,9 +79,11 @@ type
     of grooveboxTypeIcecast:
       icecast*: IcecastConfig
         ## The Icecast client for streaming media
-    of grooveboxTypeRtmp:
+    of grooveboxTypeRtmpStream:
       stream*: RtmpConfig
         ## The RTMP client for streaming media
+    of grooveboxTypeRtmpServer:
+      discard
 
   GrooveboxApp* = ref object
     ## Main application object for Groovebox

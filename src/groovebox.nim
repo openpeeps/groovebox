@@ -15,7 +15,7 @@ commands do:
   ##\    \_\  \  | \(  <_> |  <_> )   /\  ___/|    |   (  <_> >    < 
   ## \______  /__|   \____/ \____/ \_/  \___  >______  /\____/__/\_ \
   ##        \/                              \/       \/            \/
-  init path(`config`):
+  init:
     ## Initialize a new Groovebox Configuration file
 
   -- "Streaming"

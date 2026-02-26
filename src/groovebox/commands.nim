@@ -10,20 +10,95 @@
 ## a configuration file, streaming to an Icecast server, running a local RTMP server,
 ## streaming to an RTMP server, and converting media files to formats suitable for streaming.
 
-import std/[os, osproc, unidecode, strutils, posix]
+import std/[os, osproc, unidecode, strutils,
+            posix, strformat, sequtils]
 from std/net import Port, `$`
 
 import pkg/[malebolgia, nyml]
 import pkg/kapsis/[runtime, cli]
-import pkg/kapsis/interactive/spinny
+import pkg/kapsis/interactive/[spinny, widgets]
 
 import ./ice, ./config
 export icecastCommand
 
-
 proc initCommand*(v: Values) =
   ## Initialize a new Groovebox Configuration file
-  echo "todo"
+  display("""
+    ________                               __________              
+   /  _____/______  ____   _______  __ ____\______   \ _______  ___
+  /   \  __\_  __ \/  _ \ /  _ \  \/ // __ \|    |  _//  _ \  \/  /
+  \    \_\  \  | \(  <_> |  <_> )   /\  ___/|    |   (  <_> >    < 
+   \______  /__|   \____/ \____/ \_/  \___  >______  /\____/__/\_ \
+          \/                              \/       \/            \/
+  """)
+  var answer =
+    promptInteractive("Choose configuration type:",
+      answers = ["RTMP Server", "RTMP Stream", "Icecast Stream"],
+      activeIcon = "🍕")
+
+  if answer == -1:
+    displayError("Please, choose a configuration type to initialize.", quitProcess = true)
+  var grooveboxConfig: string
+  if answer == 0:
+    # handle RTMP server config initialization
+    grooveboxConfig = fmt"""# Groovebox RTMP Server Configuration
+type: rtmpserver"""
+  
+  elif answer == 1:
+    # handle RTMP stream config initialization
+    let url = prompt("SMTP Server URL", default = "rtmp://localhost/live/livestream")
+    var psVideo: seq[string] # todo support multiple playlists in the future
+    var psAudio: seq[string] # todo support multiple playlists in the future
+    psvideo.add(prompt("Video playlist", default = "videoplaylist.txt"))
+    psAudio.add(prompt("Audio playlist", default = "audioplaylist.txt"))
+
+    for path in psvideo & psAudio:
+      if not path.fileExists:
+        displayInfo("Creating " & path & " ...")
+        writeFile(path, "")
+
+    var psVideoStr = psVideo.mapIt("- \"" & it & "\"").join("\n    ")
+    var psAudioStr = psAudio.mapIt("- \"" & it & "\"").join("\n    ")
+    grooveboxConfig = fmt"""
+# Groovebox RTMP Stream Configuration
+type: rtmpstream
+stream:
+  url: {url}
+  video:
+    {psVideoStr}
+  audio:
+    {psAudioStr}"""
+    writeFile("groovebox_config.yml", grooveboxConfig)
+    displaySuccess("Groovebox configuration file created: groovebox_config.yml")
+
+  elif answer == 2:
+    # handle icecast config initialization
+    let sourceName = prompt("Icecast Source Name", default = "Groovebox Stream")
+    let sourceMount = prompt("Icecast Mount Point", default = "/stream")
+    let address  = prompt("Icecast Server Address", default = "localhost")
+    let port: Port = Port(parseInt(prompt("Icecast Server Port", default = "8000")))
+    let username = prompt("Icecast Username", default = "admin")
+    let password = prompt("Icecast Password", default = "hackme")
+    var psAudio: seq[string] # todo support multiple playlists in the future
+    psAudio.add(prompt("Audio playlist", default = "playlist1.txt"))
+    for path in psAudio:
+      if not path.fileExists:
+        displayInfo("Creating " & path & " ...")
+        writeFile(path, "")
+    var psAudioStr = psAudio.mapIt("- \"" & it & "\"").join("\n    ")
+    grooveboxConfig = fmt"""# Groovebox Icecast Stream Configuration
+type: icecast
+icecast:
+  connection:
+    address: "{address}"
+    port: {port}
+    mount: "{sourceMount}"
+    username: "{username}"
+    password: "{password}"
+  playlists:
+    {psAudioStr}"""
+    writeFile("groovebox_config.yml", grooveboxConfig)
+    displaySuccess("Groovebox configuration file created: groovebox_config.yml")
 
 proc slugify*(str: string, sep: static char = '-', allowSlash: bool = false): string =
   ## Convert `input` string to a ascii slug. Taken from Supranim package
