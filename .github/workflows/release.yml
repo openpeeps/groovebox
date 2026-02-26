@@ -56,7 +56,7 @@ jobs:
       - name: Create artifact
         run: |
           os="${{ runner.os }}"
-          arch="${{ matrix.arch:-'' }}"
+          arch="${{ matrix.arch }}"
           suffix="$os${arch:+-$arch}"
           assets="${{ env.APP_NAME }}_${suffix,,}"
           echo "$assets"
