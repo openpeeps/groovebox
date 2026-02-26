@@ -19,9 +19,10 @@ jobs:
           - macOS-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: jiro4989/setup-nim-action@v1
+      - uses: jiro4989/setup-nim-action@v2
         with:
           nim-version: ${{ env.NIM_VERSION }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: choosenim show path -y
       - name: Setup MacPorts (macOS only)
         if: runner.os == 'macOS'
