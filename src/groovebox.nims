@@ -3,6 +3,8 @@ when defined(macosx):
   --passL:"/opt/local/lib/libcrypto.a"
   --passL:"/opt/local/lib/libevent.a"
   --passC:"-I /opt/local/include"
+  when defined(arm64) or defined(aarch64):
+    --passC:"-Wincompatible-function-pointer-types"
 elif defined(linux):
   # --passL:"/usr/lib/x86_64-linux-gnu/libssl.a"
   # --passL:"/usr/lib/x86_64-linux-gnu/libcrypto.a"

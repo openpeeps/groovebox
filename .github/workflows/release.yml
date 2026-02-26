@@ -19,9 +19,7 @@ jobs:
           # - os: ubuntu-latest
           #   arch: arm64
           - os: macos-14
-            arch: x86_64
-          # - os: macos-14
-          #   arch: arm64
+            arch: arm64
     steps:
       - uses: actions/checkout@v4
       # Optional: Cache nimble packages for faster builds
@@ -123,7 +121,7 @@ jobs:
           #   asset_content_type: application/gzip
           - os: macos-14
             arch: x86_64
-            asset_name_suffix: macos-x86_64.tar.gz
+            asset_name_suffix: macos-arm64.tar.gz
             asset_content_type: application/gzip
           # - os: macos-14
           #   arch: arm64
