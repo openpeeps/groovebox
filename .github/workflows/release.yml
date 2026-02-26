@@ -18,7 +18,7 @@ jobs:
             arch: x86_64
           # - os: ubuntu-latest
           #   arch: arm64
-          - os: macos-13
+          - os: macos-14
             arch: x86_64
           - os: macos-14
             arch: arm64
@@ -46,10 +46,26 @@ jobs:
           if [[ "${{ runner.os }}" == "Linux" ]]; then
             sudo apt-get update
             sudo apt-get install -y --no-install-recommends \
-              pkg-config libssl-dev libevent-dev ca-certificates libpcre3-dev
+              pkg-config libssl-dev ca-certificates libpcre3-dev cmake git make gcc g++
+            # Build and install libevent from master
+            git clone --depth 1 https://github.com/libevent/libevent.git
+            cd libevent
+            mkdir build && cd build
+            cmake ..
+            make -j$(nproc)
+            sudo make install
+            cd ../..
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
             sudo port -v selfupdate
-            sudo port install pkgconfig openssl libevent pcre
+            sudo port install pkgconfig openssl pcre cmake git
+            # Build and install libevent from master
+            git clone --depth 1 https://github.com/libevent/libevent.git
+            cd libevent
+            mkdir build && cd build
+            cmake ..
+            make -j$(sysctl -n hw.ncpu)
+            sudo make install
+            cd ../..
           fi
         shell: bash
       - run: nimble build -Y -d:release
@@ -121,7 +137,7 @@ jobs:
           #   arch: arm64
           #   asset_name_suffix: linux-arm64.tar.gz
           #   asset_content_type: application/gzip
-          - os: macos-13
+          - os: macos-14
             arch: x86_64
             asset_name_suffix: macos-x86_64.tar.gz
             asset_content_type: application/gzip
