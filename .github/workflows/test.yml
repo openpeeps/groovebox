@@ -5,13 +5,11 @@ on:
       - LICENSE
       - README.*
       - examples
-      - .github/workflows
   pull_request:
     paths-ignore:
       - LICENSE
       - README.*
       - examples
-      - .github/workflows
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -25,6 +23,11 @@ jobs:
         with:
           nim-version: ${{ matrix.nim-version }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config libssl-dev libevent-dev ca-certificates
       - run: nimble install -Y
       - run: nim c -r src/${{ github.event.repository.name }}.nim
       - run: nimble test
