@@ -56,7 +56,8 @@ jobs:
           os="${{ runner.os }}"
           arch="${{ matrix.arch }}"
           suffix="$os${arch:+-$arch}"
-          assets="${{ env.APP_NAME }}_${suffix,,}"
+          # Lowercase suffix in a portable way
+          assets="${{ env.APP_NAME }}_$(echo "$suffix" | tr '[:upper:]' '[:lower:]')"
           echo "$assets"
           mkdir -p "dist/$assets"
           cp -r bin LICENSE README.* "dist/$assets/"
