@@ -18,7 +18,7 @@ jobs:
           # - windows-latest
           - macOS-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ env.NIM_VERSION }}
@@ -55,7 +55,7 @@ jobs:
             ls -lah *.*
           )
         shell: bash
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: artifact-${{ matrix.os }}
           path: |
@@ -68,7 +68,7 @@ jobs:
     needs:
       - build-artifact
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Create Release
         id: create-release
         uses: actions/create-release@v1
@@ -84,7 +84,7 @@ jobs:
       - name: Write upload_url to file
         run: echo '${{ steps.create-release.outputs.upload_url }}' > upload_url.txt
       
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: create-release
           path: upload_url.txt
