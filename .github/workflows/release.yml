@@ -16,10 +16,10 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: x86_64
-          # - os: ubuntu-latest
-          #   arch: arm64
           - os: macos-14
             arch: arm64
+          - os: macos-15-intel
+            arch: x86_64
     steps:
       - uses: actions/checkout@v4
       # Optional: Cache nimble packages for faster builds
@@ -116,18 +116,14 @@ jobs:
             arch: x86_64
             asset_name_suffix: linux-x86_64.tar.gz
             asset_content_type: application/gzip
-          # - os: ubuntu-latest
-          #   arch: arm64
-          #   asset_name_suffix: linux-arm64.tar.gz
-          #   asset_content_type: application/gzip
           - os: macos-14
-            arch: x86_64
+            arch: arm64
             asset_name_suffix: macos-arm64.tar.gz
             asset_content_type: application/gzip
-          # - os: macos-14
-          #   arch: arm64
-          #   asset_name_suffix: macos-arm64.tar.gz
-          #   asset_content_type: application/gzip
+          - os: macos-15-intel
+            arch: x86_64
+            asset_name_suffix: macos-15-intel-x86_64.tar.gz
+            asset_content_type: application/gzip
     steps:
       - uses: actions/download-artifact@v4
         with:
