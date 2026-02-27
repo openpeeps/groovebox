@@ -301,7 +301,7 @@ proc convertAudioProcess*(audioType: ConvertAudioType, input, output: string, kb
     displayInfo("Output directory: " & outputDir)
   elif inputPath.fileExists():
     # single file conversion
-    var sp = newSpinny("Converting audio to OGG format...", skDots)
+    var sp = newSpinny("Converting audio to " & $audioType & " format...", skDots)
     sp.start()
     let outputSplit = outputDir.splitFile()
     let outFile =
