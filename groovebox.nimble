@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.1"
+version       = "0.1.2"
 author        = "George Lemon"
 description   = "Live stream pre-recorded media to Twitch, Yotube and Icecast servers"
 license       = "AGPL-3.0-or-later"
