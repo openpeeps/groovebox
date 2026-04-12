@@ -17,7 +17,7 @@ import std/[os, strutils, sequtils, base64, options,
           times, posix, strformat, random, net]
 
 import pkg/nyml
-import pkg/kapsis/[runtime, cli]
+import pkg/kapsis/[runtime, interactive/prompts]
 import pkg/libevent/bindings/[http, event, buffer,
                     bufferevent, threaded, listener]
 import ./config

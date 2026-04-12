@@ -15,8 +15,8 @@ import std/[os, osproc, unidecode, strutils,
 from std/net import Port, `$`
 
 import pkg/[malebolgia, nyml]
-import pkg/kapsis/[runtime, cli]
-import pkg/kapsis/interactive/[spinny, widgets]
+import pkg/kapsis/runtime
+import pkg/kapsis/interactive/[spinny, widgets, prompts]
 
 import ./ice, ./config
 export icecastCommand
@@ -132,7 +132,7 @@ proc slugify*(str: string, sep: static char = '-', allowSlash: bool = false): st
 
 import pkg/rtmp
 
-proc serverCommand*(v: Values) =
+proc rtmpServerCommand*(v: Values) =
   ## Kapsis command for running RTMP server
   display(cliHeading)
   let configPath = v.get("config").getPath
@@ -140,7 +140,7 @@ proc serverCommand*(v: Values) =
   display("Starting RTMP server on port " & $rtmpServer.settings.rtmpPort)
   rtmpServer.startServer()
 
-proc streamCommand*(v: Values) =
+proc rtmpStreamCommand*(v: Values) =
   ## Kapsis command for runningg RTMP client with playlist support
   display(cliHeading)
   let configPath = normalizedPath(getCurrentDir() / $(v.get("config").getPath))
