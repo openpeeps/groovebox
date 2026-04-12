@@ -239,10 +239,15 @@ proc flvCommand*(v: Values) =
   ## Convert video files to FLV format for streaming
   let input = v.get("in").getPath
   let output = v.get("out").getFilepath()
+  # twitch and youtube accept a max bitrate of 6000 kbps for streaming
   let kbs =
     if v.has("--kbs"):
       v.get("--kbs").getInt
-    else: 11_021 # default to 10 Mbps
+    else: 6000
+
+  let size = if v.has("--size"):
+    v.get("--size").getStr
+  else: "1280x720" # default to 720p
 
   let fps =
     if v.has("--fps"):
@@ -252,16 +257,18 @@ proc flvCommand*(v: Values) =
   # checking if output file exists
   if output.fileExists:
     if not promptConfirm("Output file already exists. Overwrite? (y/n): "): return
-
+  # let vfFilter = " -vf \"scale=" & size.replace("x", ":") & ":flags=lanczos,unsharp=5:5:0.8\" "
   let cmd =
-    "ffmpeg -y -i " & $input &
-    " -c:v libx264 -preset veryslow -profile:v main -level:v 4.1 -pix_fmt yuv420p" &
-    " -b:v " & $kbs & "k -minrate " & $kbs & "k -maxrate " & $kbs & "k -bufsize " & $(kbs * 2) & "k" &
+    "ffmpeg -y -i \"" & $input & "\"" &
+    " -c:v libx264 -preset veryfast -tune grain -profile:v main -level 4.0 -pix_fmt yuv420p" &
     " -r " & $fps &
-    " -g 60 -keyint_min 60 -sc_threshold 0" &
-    " -bf 1 -x264-params \"repeat-headers=1\"" &
-    " -force_key_frames \"expr:gte(t,0)\"" &
-    " -vsync cfr -an -f flv " & output
+    " -g 60" &
+    # " -b:v " & $kbs & "k -maxrate " & $kbs & "k -bufsize " & $(kbs * 2) & "k" &
+    " -b:v 2500k -maxrate 2500k -bufsize 5000k" &
+    # " -bf 0 -refs 3" &
+    # " -x264-params \"repeat-headers=1:nal-hrd=cbr:force-cfr=1:vbv-maxrate=" & $kbs & ":vbv-bufsize=" & $(kbs * 2) & "\"" &
+    " -f flv \"" & output & "\""
+# ffmpeg -y -i input.mov -c:v libx264 -preset veryfast -profile:v main -level 4.0 -pix_fmt yuv420p -r 30 -g 60 -b:v 2500k -maxrate 2500k -bufsize 5000k -c:a aac -ar 44100 -ac 2 -b:a 128k -f flv output.flv
   let res = execCmdEx(cmd)
   display(res.output) # always display ffmpeg output
   if not res.exitCode != 0: displaySuccess("Done!")
