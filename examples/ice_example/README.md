@@ -28,10 +28,4 @@ groovebox icecast groovebox_config.yml
 > [!NOTE]
 > There are plans to implement an Icecast server within Groovebox itself in the future, which will allow for fine-grained control, dashboard monitoring, membership management and more. Stay tuned!
 
-Groovebox streams to any Icecast servers using low memory and CPU resources because it does not re-encode the media files. Instead, it streams the pre-encoded OGG files directly to the server. This means that you can use Groovebox to stream high-quality audio without worrying about performance issues.
-
-The downside of this approach is that you need to pre-encode your media files in OGG format before streaming them with Groovebox, and you won't be able to use the usual live effects and controls that Liquidsoap provides.
-
-However, Groovebox is designed to be a simple and efficient streaming solution for backyard radio stations, parties, coffee shops, and other small venues.
-
 🤘 Music in this example is generated with Suno AI
