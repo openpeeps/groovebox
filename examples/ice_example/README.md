@@ -33,3 +33,5 @@ Groovebox streams to any Icecast servers using low memory and CPU resources beca
 The downside of this approach is that you need to pre-encode your media files in OGG format before streaming them with Groovebox, and you won't be able to use the usual live effects and controls that Liquidsoap provides.
 
 However, Groovebox is designed to be a simple and efficient streaming solution for backyard radio stations, parties, coffee shops, and other small venues.
+
+🤘 Music in this example is generated with Suno AI
