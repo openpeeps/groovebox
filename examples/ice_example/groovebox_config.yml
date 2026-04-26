@@ -1,0 +1,11 @@
+# Groovebox Icecast Stream Configuration
+type: icecast
+icecast:
+  connection:
+    address: "localhost"
+    port: 8000
+    mount: "/stream"
+    username: "admin"
+    password: "hackme"
+  playlists:
+    - "playlist.txt"
