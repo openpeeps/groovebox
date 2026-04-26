@@ -17,6 +17,7 @@ import std/[os, strutils, sequtils, base64, options,
           times, posix, strformat, random, net]
 
 import pkg/nyml
+import pkg/openparser/json
 import pkg/kapsis/[runtime, interactive/prompts]
 import pkg/libevent/bindings/[http, event, buffer,
                     bufferevent, threaded, listener]
@@ -280,7 +281,7 @@ proc icecastCommand*(v: Values) =
   display(cliHeading)
   let configPath = normalizedPath(getCurrentDir() / $(v.get("config").getPath))
   if configPath.endsWith(".yml") or configPath.endsWith(".yaml"):
-    GConfig = fromYaml(readFile(configPath), GrooveboxConfig)
+    GConfig = fromYaml(readFile(configPath), GrooveboxConfig) # todo use openparser/yaml
   elif configPath.endsWith(".json"):
     GConfig = fromJson(readFile(configPath), GrooveboxConfig)
   else:

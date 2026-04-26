@@ -14,7 +14,7 @@ import std/[os, osproc, unidecode, strutils,
             posix, strformat, sequtils]
 from std/net import Port, `$`
 
-import pkg/[malebolgia, nyml]
+import pkg/[malebolgia, nyml, openparser/json]
 import pkg/kapsis/runtime
 import pkg/kapsis/interactive/[spinny, widgets, prompts]
 
