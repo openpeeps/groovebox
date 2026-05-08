@@ -743,6 +743,7 @@ proc onSourceRequestComplete(req: ptr evhttp_request, arg: pointer) {.cdecl.} =
   logServer(fmt"source disconnected on {mount.path}")
 
 proc newIcecastServer*(cfg: IcecastServerConfig): IcecastServer =
+  ## Initializes a new IcecastServer instance with the provided configuration.
   result = IcecastServer(
     cfg: cfg,
     base: nil,
@@ -779,7 +780,8 @@ proc handleListenerRequest(server: IcecastServer, mount: Mountpoint, req: ptr ev
     sendReply(req, HTTP_SERVUNAVAIL, "No Source", "text/plain", "source is not connected")
     return
 
-  sendReply(req, HTTP_NOTIMPLEMENTED, "Not Implemented", "text/plain", "listener streaming fanout will be enabled in next step")
+  sendReply(req, HTTP_NOTIMPLEMENTED, "Not Implemented",
+    "text/plain", "listener streaming fanout will be enabled in next step")
 
 proc start*(server: IcecastServer): bool =
   ## Starts the server by initializing the event base, setting up the source listener,
