@@ -11,15 +11,14 @@
 ## streaming to an RTMP server, and converting media files to formats suitable for streaming.
 
 import std/[os, osproc, unidecode, strutils,
-            posix, strformat, sequtils]
+            posix, strformat, sequtils, options]
+
 from std/net import Port, `$`
 
 import pkg/[malebolgia, nyml, openparser/json]
 import pkg/kapsis/runtime
 import pkg/kapsis/interactive/[spinny, widgets, prompts]
-
-import ./ice, ./config
-export icecastCommand
+import ./config
 
 proc initCommand*(v: Values) =
   ## Initialize a new Groovebox Configuration file
@@ -268,7 +267,7 @@ proc flvCommand*(v: Values) =
     # " -bf 0 -refs 3" &
     # " -x264-params \"repeat-headers=1:nal-hrd=cbr:force-cfr=1:vbv-maxrate=" & $kbs & ":vbv-bufsize=" & $(kbs * 2) & "\"" &
     " -f flv \"" & output & "\""
-# ffmpeg -y -i input.mov -c:v libx264 -preset veryfast -profile:v main -level 4.0 -pix_fmt yuv420p -r 30 -g 60 -b:v 2500k -maxrate 2500k -bufsize 5000k -c:a aac -ar 44100 -ac 2 -b:a 128k -f flv output.flv
+  # ffmpeg -y -i input.mov -c:v libx264 -preset veryfast -profile:v main -level 4.0 -pix_fmt yuv420p -r 30 -g 60 -b:v 2500k -maxrate 2500k -bufsize 5000k -c:a aac -ar 44100 -ac 2 -b:a 128k -f flv output.flv
   let res = execCmdEx(cmd)
   display(res.output) # always display ffmpeg output
   if not res.exitCode != 0: displaySuccess("Done!")
@@ -342,3 +341,55 @@ proc oggCommand*(v: Values) =
   if output.fileExists:
     if not promptConfirm("Output file already exists. Overwrite? (y/n): "): return
   convertAudioProcess(ConvertAudioType.ctOgg, input.path, output, kbs)
+
+
+#
+# Icecast commands
+#
+import ./icecast/[icecast_client, icecast_server], ./config
+export icecastStreamCommand
+
+proc icecastServerCommand*(v: Values) =
+  ## Kapsis command for opening an Icecast server
+  display(cliHeading)
+
+  let configPath = $(v.get("config").getPath)
+
+  if configPath.endsWith(".yml") or configPath.endsWith(".yaml"):
+    GConfig = fromYaml(readFile(configPath), GrooveboxConfig)
+  elif configPath.endsWith(".json"):
+    GConfig = fromJson(readFile(configPath), GrooveboxConfig)
+  else:
+    display("No Groovebox Config found in the current directory (.yml/.yaml/.json)")
+    QuitFailure.quit
+  let address = GConfig.icecast.connection.address.get("localhost")
+  let port = GConfig.icecast.connection.port
+  let mount = GConfig.icecast.connection.mountPoint.get("/stream")
+  
+  let username = 
+    if GConfig.icecast.connection.credentials.isSome:
+      GConfig.icecast.connection.credentials.get().username
+    else: "source"
+  
+  let password =
+    if GConfig.icecast.connection.credentials.isSome:
+      GConfig.icecast.connection.credentials.get().password
+    else: "hackme"
+
+  display("Starting Icecast server stream to " & address & ":" & $port & mount)
+
+  var config = IcecastServerConfig(
+    address: address,
+    port: port.uint16,
+    mountpoints: @[
+      MountpointConfig(
+        path: mount,
+        contentType: "audio/ogg",
+        sourceAuth: SourceAuth(username: username, password: password),
+        maxListeners: 2
+      )
+    ]
+  )
+    
+  let server = newIcecastServer(config)
+  discard server.run()

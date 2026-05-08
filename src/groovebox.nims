@@ -7,9 +7,9 @@ when defined(macosx):
 elif defined(linux):
   # --passL:"/usr/lib/x86_64-linux-gnu/libssl.a"
   # --passL:"/usr/lib/x86_64-linux-gnu/libcrypto.a"
-  # --passL:"/usr/local/lib/libevent.a"
-  --passL:"-L/usr/local/lib/lib -L/usr/local/lib -Wl,-rpath,/usr/local/lib/lib -Wl,-rpath,/usr/local/lib -levent"
-  --passC:"-I /usr/include"
+  # --passL:"-L/usr/local/lib/lib -L/usr/local/lib -Wl,-rpath,/usr/local/lib/lib -Wl,-rpath,/usr/local/lib -levent"
+  --passL:"/usr/local/lib/libevent.a"
+  --passC:"-I/usr/include"
 
 when defined release:
   --passC:"-O3 -flto" # Optimize for speed

@@ -1,0 +1,3 @@
+--passL:"/opt/local/lib/libevent.a"
+--passC:"-I /opt/local/include"
+--passC:"-Wno-incompatible-function-pointer-types"

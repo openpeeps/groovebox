@@ -21,7 +21,7 @@ import pkg/openparser/json
 import pkg/kapsis/[runtime, interactive/prompts]
 import pkg/libevent/bindings/[http, event, buffer,
                     bufferevent, threaded, listener]
-import ./config
+import ../config
 
 const
   READ_BUF_SIZE = 65536 # 64 KB
@@ -66,17 +66,17 @@ proc freeApp(a: App) =
 randomize()
 
 proc buildSourceRequest(a: App): string =
-  let httpMethod = "SOURCE" # or PUT?
+  let httpMethod = "PUT"
   let b64 = base64.encode(a.username & ":" & a.password)
-  result = fmt"""{httpMethod} {a.mount} HTTP/1.0
-Host: {a.host}
-Authorization: Basic {b64}
-Content-Type: audio/ogg
-Icy-MetaData: 0
-User-Agent: libevent-icecast-source/1.0
-Connection: Keep-Alive
-
-"""
+  result =
+    httpMethod & " " & a.mount & " HTTP/1.1\r\n" &
+    "Host: " & a.host & ":" & a.port & "\r\n" &
+    "Authorization: Basic " & b64 & "\r\n" &
+    "Content-Type: audio/ogg\r\n" &
+    "Icy-MetaData: 0\r\n" &
+    "User-Agent: libevent-icecast-source/1.0\r\n" &
+    "Connection: keep-alive\r\n" &
+    "\r\n"
 
 proc loadPlaylist(a: App, plistPath: string; shuffle: bool = false): int =
   # Load playlist from a file. Each line is a file path.
@@ -246,7 +246,8 @@ proc connectToServer(a: App): int =
   # Connect to the Icecast server
   var hints: AddrInfo
   zeroMem(addr hints, sizeof(hints))
-  hints.ai_family = AF_UNSPEC
+  # hints.ai_family = AF_UNSPEC
+  hints.ai_family = AF_INET
   hints.ai_socktype = SOCK_STREAM
   
   var res: ptr AddrInfo
@@ -276,7 +277,7 @@ proc connectToServer(a: App): int =
   freeaddrinfo(res)
   return 0
 
-proc icecastCommand*(v: Values) =
+proc icecastStreamCommand*(v: Values) =
   ## Stream media from a source via CLI
   display(cliHeading)
   let configPath = normalizedPath(getCurrentDir() / $(v.get("config").getPath))
@@ -326,14 +327,14 @@ proc icecastCommand*(v: Values) =
       sleep(RECONNECT_DELAY_SEC)
       continue
 
-    assert event_base_dispatch(app.base) == 0
+    let loopRc = event_base_dispatch(app.base)
+    if loopRc < 0:
+      displayError("Event loop failed; will retry")
+
     if app.tickEv != nil:
-      assert evtimer_del(app.tickEv) == 0
+      discard evtimer_del(app.tickEv)
       event_free(app.tickEv)
       app.tickEv = nil
-
-    displayError("Disconnected, reconnecting in " & $RECONNECT_DELAY_SEC & " seconds...")
-    sleep(RECONNECT_DELAY_SEC)
 
     if app.bev != nil: 
       bufferevent_free(app.bev)

@@ -14,8 +14,12 @@ initKapsis do:
       ## Initialize a new Groovebox Configuration file
 
     -- "Streaming"
-    icecast path(config):
-      ## Stream media to a Icecast server
+    icecast:
+      ## Stream media to an Icecast server
+      server path(config):
+        ## Start an Icecast server to receive streams
+      stream path(config):
+        ## Stream media to an Icecast server
 
     rtmp:
       ## Stream media to a RTMP server
