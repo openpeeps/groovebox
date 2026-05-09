@@ -21,10 +21,6 @@
 
 Also, with Groovebox you can stream music to Icecast-compatible servers! It is designed to be **fast**, **memory-efficient**, and **easy to use**, making it ideal for streaming sessions and internet radio stations.
 
-### How it works?
-It streams files (one-by-one) from playlists; it does not capture live camera or microphone input. Also, **Groovebox does not require any GPU acceleration as it does not perform any video encoding or decoding itself.** Still, you can use the predefined CLI commands to convert media files to formats suitable for streaming using `ffmpeg`.
-
-
 ## 😍 Key Features
 - 🔥 Compiled, **extremely lightweight**, and **super fast**
 - 🎵 Supports **MP3, OGG Vorbis, OGG Opus, AAC**, and more via external encoders
@@ -56,7 +52,7 @@ After installing Groovebox, you can run the `groovebox -h` command in your termi
 ```
 $ groovebox -h
 
-__________                              ___________              
+  ________                              ___________              
  /  _____/______  ____   _______  __ ____\______   \ _______  ___
 /   \  __\_  __ \/  _ \ /  _ \  \/ // __ \|    |  _//  _ \  \/  /
 \    \_\  \  | \(  <_> |  <_> )   /\  ___/|    |   (  <_> >    < 
@@ -81,22 +77,50 @@ Media Tools
 ```
 
 # Groovebox for Icecast
-Groovebox streams to any Icecast servers using low memory and CPU resources because it does not re-encode the media files. Instead, it streams the pre-encoded OGG files directly to the server. This means that you can use Groovebox to stream high-quality audio without worrying about performance issues.
 
-The downside of this approach is that you need to pre-encode your media files in OGG format before streaming them with Groovebox, and you won't be able to use the usual live effects and controls that Liquidsoap provides (or any other software that re-encodes the media files live).
+Groovebox streams directly to any Icecast server using minimal memory and CPU, as it does **not** re-encode media files. Instead, it streams pre-encoded OGG files, allowing for high-quality audio streaming with excellent performance.
 
-👉 However, Groovebox is designed to be a simple and efficient streaming solution for **backyard radio stations**, **parties**, **coffee shops**, and other small venues.
+> **Note:** You must pre-encode your media files to OGG format before streaming with Groovebox. Live effects and controls (like those in Liquidsoap or other live re-encoding software) are not available.
 
-## Prepare media for streaming
-Use the built-in Groovebox commands to prepare your media files for streaming. For RTMP streaming you can use the `flv` command to convert your video files to FLV format, and the `aac` command to convert your audio files to AAC format. For Icecast streaming, you can use the `ogg` command to convert your audio files to OGG format.
+**Groovebox is ideal for:**  
+- Backyard radio stations  
+- Parties  
+- Coffee shops  
+- Small venues  
 
-Note: Groovebox is using the `ffmpeg` under the hood to convert audio/video files, so you need to have `ffmpeg` installed on your system and available in your PATH for these commands to work.
+---
+
+## Preparing Media for Streaming
+
+Groovebox provides built-in commands to prepare your media:
+
+- **For RTMP streaming:**  
+  - `flv` – Convert video files to FLV format  
+  - `aac` – Convert audio files to AAC format  
+- **For Icecast streaming:**  
+  - `ogg` – Convert audio files to OGG format  
+
+> Groovebox uses `ffmpeg` under the hood. Make sure `ffmpeg` is installed and available in your system `PATH`.
+
+---
 
 ## Configuration
-Groovebox uses a YAML configuration file to specify the streaming settings, including the RTMP server URL, Stream Key, and playlist paths. You can create a new configuration file using the `groovebox init` command, or you can create it manually. The configuration file should be named `groovebox.config.yaml` and placed in the root of streaming project.
 
-### Icecast Streaming
-To stream to an Icecast-compatible server, you will need to provide the server address, port, mount point, and the playlist file in the `groovebox.config.yaml` file:
+Groovebox uses a YAML configuration file (`groovebox.config.yaml`) to specify streaming settings, such as server URLs, stream keys, and playlist paths.  
+
+You can create this file with `groovebox init` or manually.
+
+## Icecast Server
+Recently added support for a built-in Icecast-compatible server implementation so you don't need to install any third-party software to for streaming. Starting the server is simple:
+
+```bash
+groovebox icecast.server groovebox.config.yaml
+```
+_todo showcase the config file for the server_
+
+## Icecast Streaming
+To stream to an Icecast server using the `groovebox icecast.stream` command, configure your `groovebox.config.yaml` as follows:
+
 ```yaml
 type: icecast
 icecast:
@@ -108,23 +132,33 @@ icecast:
       - "playlist.txt"
 ```
 
-# Groovebox for Real-Time Messaging Protocol (RTMP)
-Groovebox can stream to any RTMP server, including YouTube and Twitch. To stream to an RTMP server, you will need the RTMP URL and Stream Key from your streaming platform.
+---
 
-### RTMP Stream Server
-Use the high-performance built-in RTMP server to receive and redistribute streams to other clients. Currently there is no specific config for the Groovebox RTMP server, you can use `.` to skip cli validation and run the server directly
+# Groovebox for RTMP (Real-Time Messaging Protocol)
 
-```
+Groovebox can stream to any RTMP server, including YouTube and Twitch. You’ll need the RTMP URL and Stream Key from your platform.
+
+---
+
+## RTMP Stream Server
+
+Start the built-in RTMP server to receive and redistribute streams:
+
+```bash
 groovebox rtmp.server .
 ```
 
-The server will listen on rtmp://127.0.0.1:1935 by default.
+- The server listens on `rtmp://127.0.0.1:1935` by default.
+- No specific config is required; use `.` to skip CLI validation.
 
-### RTMP Stream Client
-Use the `rtmp.stream` command to stream media to a RTMP server. The `groovebox.config.yaml` file should specify the RTMP server url and the playlists for video and audio:
+---
+
+## RTMP Stream Client
+
+Use the `rtmp.stream` command to stream media to an RTMP server.  
+Configure your `groovebox.config.yaml` as follows:
 
 ```yaml
-# Stream media to a RTMP server (for exammple Twitch)
 type: rtmp
 stream:
   url: "rtmp://live.twitch.tv/app/your_stream_key"
@@ -134,13 +168,22 @@ stream:
     - "./audioplaylist.txt"
 ```
 
-### Why use Groovebox instead of ffmpeg/OBS Studio for streaming to RTMP servers?
-- 👌 **Simplicity**: Groovebox provides a simple and intuitive interface for streaming pre-recorded media to RTMP servers, without the need to write complex ffmpeg command lines.
-- 🎧 **Playlist Management**: Groovebox has built-in support for managing playlists, allowing you to easily organize and shuffle your media files for streaming sessions.
-- 📁 **Zero-Copy Streaming**: Groovebox is designed to stream media directly from the source file to the network without fully loading it into memory, which makes it more efficient for streaming large media files without consuming excessive system resources.
-- 🕊 **Lightweight**: Groovebox is a lightweight application that is optimized for streaming, while ffmpeg is a powerful multimedia framework that can be used for a wide range of media processing tasks, which may be overkill for simple streaming use cases.
-- 💪 **No GPU required**: OBS Studio is a popular streaming software that provides advanced features for live streaming, but it requires GPU acceleration for video encoding and processing, which may not be available on all systems. Groovebox, on the other hand, does not require any GPU acceleration as it does not perform any video encoding or decoding itself.
-- 💫 **Ideal for VPS streaming**: Groovebox is designed to be fast and efficient, making it ideal for streaming sessions from a basic VPS (Virtual Private Server) without the need for a GPU, or too much CPU/RAM resources.
+### Groovebox vs Other Streaming Solutions
+
+| Feature                        | Groovebox           | ffmpeg                | AzuraCast           | OBS Studio / Others      |
+|---------------------------------|---------------------|-----------------------|---------------------|--------------------------|
+| **Simplicity**                  | ✅ Simple CLI, no complex commands | ❌ Complex CLI, scripting required | ✅ Web UI, but more setup | ❌ Complex UI, many options |
+| **Playlist Management**         | ✅ Built-in, shuffle support       | ❌ Manual, external scripts needed | ✅ Advanced, web-based   | ❌ Manual, scene-based      |
+| **Zero-Copy Streaming**         | ✅ Yes, direct file-to-network     | ❌ Loads into memory/buffers      | ❌ Not zero-copy         | ❌ Not zero-copy            |
+| **Lightweight**                 | ✅ Very lightweight                | ✅ Lightweight, but less focused  | ❌ Heavy, Docker-based   | ❌ Heavy, needs GPU/CPU     |
+| **No GPU Required**             | ✅ Never required                  | ✅ Not required for audio         | ✅ Not required          | ❌ Often required for video |
+| **Ideal for VPS**               | ✅ Yes, low resource usage         | ✅ Yes, but needs scripting       | ❌ Needs more resources  | ❌ Not ideal, high resource |
+| **Live Effects/Processing**     | ❌ Not supported                   | ✅ Supported via filters          | ✅ Supported             | ✅ Supported                |
+| **Web Interface**               | ❌ CLI only                        | ❌ None                          | ✅ Yes                   | ✅ Yes                      |
+| **Built-in Server**             | ✅ RTMP & Icecast compatible       | ❌ No                            | ✅ Yes                   | ❌ No                       |
+| **Open Source**                 | ✅ Yes (AGPLv3)                    | ✅ Yes (LGPL/GPL)                | ✅ Yes (AGPLv3)          | ✅ Yes                      |
+
+> **Note:** Groovebox is designed for streaming pre-encoded playlists with maximum efficiency and minimal setup, making it ideal for simple, automated streaming scenarios.
 
 ## Roadmap
 Source Client
@@ -157,7 +200,7 @@ Source Client
 - [ ] Live streaming from non non-seekable sources (e.g. stdin) via ffmpeg
 
 Server
-- [ ] Implement a Icecast-compatible based on Libevent
+- [x] Implement a Icecast-compatible based on Libevent
 - [ ] Middleware Authentication using JWT
 - [ ] Subscriber management
 - [ ] Rate Limiting and Anti-abuse
