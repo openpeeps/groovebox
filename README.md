@@ -1,5 +1,4 @@
 <p align="center">
-  <img src="https://github.com/openpeeps/groovebox/blob/main/.github/groovebox_logo.png" width="90px"><br>
   Groovebox 📦 Badass CLI app for streaming to Twitch, Youtube,<br>any RTMP servers and 🧊 Icecast-compatible servers<br><br>
   Fast &bullet; Lightweight &bullet; Compiled &bullet; 👑 Written in Nim language
 </p>
@@ -209,7 +208,6 @@ Server
 ### ❤ Contributions & Support
 - 🐛 Found a bug? [Create a new Issue](https://github.com/openpeeps/groovebox/issues)
 - 👋 Wanna help? [Fork it!](https://github.com/openpeeps/groovebox/fork)
-- 😎 [Get €20 in cloud credits from Hetzner](https://hetzner.cloud/?ref=Hm0mYGM9NxZ4)
 
 ### 🎩 License
 AGPLv3 license. [Made by Humans from OpenPeeps](https://github.com/openpeeps).<br>
